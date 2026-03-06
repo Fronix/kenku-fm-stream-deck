@@ -87,41 +87,34 @@ const soundboardPlayAction = {
 const playbackActions = {};
 
 const playlistPlaybackAction = {
-  state: {
-    playing: false,
-    repeat: "off",
-    shuffle: false,
-    muted: false,
-    volume: 1,
-  },
   onKeyDown: async function (context, settings) {
     try {
       switch (settings.action) {
         case "play-pause":
-          this.state.playing = !this.state.playing;
+          playbackState.controls.playing = !playbackState.controls.playing;
           await api(
-            this.state.playing
+            playbackState.controls.playing
               ? "playlist/playback/play"
               : "playlist/playback/pause",
             "PUT"
           );
           break;
         case "increase-volume":
-          this.state.volume += 0.05;
+          playbackState.controls.volume = Math.min(1, playbackState.controls.volume + 0.05);
           await api("playlist/playback/volume", "PUT", {
-            volume: this.state.volume,
+            volume: playbackState.controls.volume,
           });
           break;
         case "decrease-volume":
-          this.state.volume -= 0.05;
+          playbackState.controls.volume = Math.max(0, playbackState.controls.volume - 0.05);
           await api("playlist/playback/volume", "PUT", {
-            volume: this.state.volume,
+            volume: playbackState.controls.volume,
           });
           break;
         case "mute":
-          this.state.muted = !this.state.muted;
+          playbackState.controls.muted = !playbackState.controls.muted;
           await api("playlist/playback/mute", "PUT", {
-            mute: this.state.muted,
+            mute: playbackState.controls.muted,
           });
           break;
         case "next":
@@ -131,29 +124,29 @@ const playlistPlaybackAction = {
           await api("playlist/playback/previous", "POST");
           break;
         case "shuffle":
-          this.state.shuffle = !this.state.shuffle;
+          playbackState.controls.shuffle = !playbackState.controls.shuffle;
           await api("playlist/playback/shuffle", "PUT", {
-            shuffle: this.state.shuffle,
+            shuffle: playbackState.controls.shuffle,
           });
           break;
         case "repeat":
-          switch (this.state.repeat) {
+          switch (playbackState.controls.repeat) {
             case "off":
-              this.state.repeat = "playlist";
+              playbackState.controls.repeat = "playlist";
               break;
             case "playlist":
-              this.state.repeat = "track";
+              playbackState.controls.repeat = "track";
               break;
             case "track":
-              this.state.repeat = "off";
+              playbackState.controls.repeat = "off";
               break;
           }
           await api("playlist/playback/repeat", "PUT", {
-            repeat: this.state.repeat,
+            repeat: playbackState.controls.repeat,
           });
           break;
         default:
-          throw Error("Action not implmented");
+          throw Error("Action not implemented");
       }
       this.updateImage(context, settings.action);
     } catch (e) {
@@ -183,14 +176,14 @@ const playlistPlaybackAction = {
   updateImage: function (context, action) {
     switch (action) {
       case "play-pause":
-        if (this.state.playing) {
+        if (playbackState.controls.playing) {
           setImageFromURL(context, "../assets/actionPauseImage@2x.jpg");
         } else {
           setImageFromURL(context, "../assets/actionPlayImage@2x.jpg");
         }
         break;
       case "mute":
-        if (this.state.muted) {
+        if (playbackState.controls.muted) {
           setImageFromURL(context, "../assets/actionMuteOnImage@2x.jpg");
         } else {
           setImageFromURL(context, "../assets/actionMuteOffImage@2x.jpg");
@@ -209,7 +202,7 @@ const playlistPlaybackAction = {
         setImageFromURL(context, "../assets/actionPreviousImage@2x.jpg");
         break;
       case "repeat":
-        switch (this.state.repeat) {
+        switch (playbackState.controls.repeat) {
           case "off":
             setImageFromURL(context, "../assets/actionRepeatOffImage@2x.jpg");
             break;
@@ -225,7 +218,7 @@ const playlistPlaybackAction = {
         }
         break;
       case "shuffle":
-        if (this.state.shuffle) {
+        if (playbackState.controls.shuffle) {
           setImageFromURL(context, "../assets/actionShuffleOnImage@2x.jpg");
         } else {
           setImageFromURL(context, "../assets/actionShuffleOffImage@2x.jpg");

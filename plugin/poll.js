@@ -17,13 +17,22 @@ function startPlaybackPolling() {
       if (result && result.playlist && result.soundboard) {
         updatePlayback(result.playlist, result.soundboard);
       }
-    } catch {}
+    } catch (e) {
+      console.debug("Polling error:", e);
+    }
   }, 1000);
 }
 
 const playbackState = {
   playlist: undefined,
   soundboard: undefined,
+  controls: {
+    playing: false,
+    repeat: "off",
+    shuffle: false,
+    muted: false,
+    volume: 1,
+  },
 };
 
 /**
@@ -42,10 +51,10 @@ function updatePlayback(playlist, soundboard) {
 
   // Update local playback state to match incoming state
   let playbackStateDirty = false;
-  for (let key of Object.keys(playlistPlaybackAction.state)) {
-    if (playlist[key] !== playlistPlaybackAction.state[key]) {
+  for (let key of Object.keys(playbackState.controls)) {
+    if (playlist[key] !== playbackState.controls[key]) {
       playbackStateDirty = true;
-      playlistPlaybackAction.state[key] = playlist[key];
+      playbackState.controls[key] = playlist[key];
     }
   }
 

@@ -13,14 +13,13 @@ const cachedURLs = {};
  * @param {string} context action context
  * @param {string} url
  */
-function setImageFromURL(context, url) {
+async function setImageFromURL(context, url) {
   if (url in cachedURLs) {
     setImage(context, cachedURLs[url]);
   } else {
-    toDataURL(url, (image) => {
-      setImage(context, image);
-      cachedURLs[url] = image;
-    });
+    const image = await toDataURL(url);
+    cachedURLs[url] = image;
+    setImage(context, image);
   }
 }
 
@@ -45,20 +44,16 @@ function setImage(context, image) {
 /**
  * Convert an image from a url into base64
  * @param {string} url
- * @param {() => string} callback
+ * @returns {Promise<string>} base64 encoded image
  */
-function toDataURL(url, callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      callback(reader.result);
-    };
-    reader.readAsDataURL(xhr.response);
-  };
-  xhr.open("GET", url);
-  xhr.responseType = "blob";
-  xhr.send();
+async function toDataURL(url) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
 }
 
 /**
