@@ -1,0 +1,25 @@
+name: Build and Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Package plugin
+        run: |
+          PLUGIN_DIR="fm.kenku.remote.sdPlugin"
+          mkdir "$PLUGIN_DIR"
+          cp -r assets docs pi plugin manifest.json en.json LICENSE README.md "$PLUGIN_DIR/"
+          npm install -g @elgato/cli
+          streamdeck pack "$PLUGIN_DIR"
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: fm.kenku.remote.streamDeckPlugin
