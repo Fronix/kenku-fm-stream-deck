@@ -5,7 +5,7 @@ import typescript from "@rollup/plugin-typescript";
 export default {
   input: "src/plugin.ts",
   output: {
-    file: ".sdPlugin/bin/plugin.js",
+    file: "fm.kenku.remote.sdPlugin/bin/plugin.js",
     format: "cjs",
     sourcemap: true,
   },

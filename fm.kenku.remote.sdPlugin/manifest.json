@@ -36,7 +36,7 @@
         {
           "Image": "imgs/actionPlaylistPlayImage",
           "TitleAlignment": "bottom",
-          "FontSize": "16"
+          "FontSize": 16
         }
       ],
       "Tooltip": "Plays a track or playlist by ID in the Kenku Player app",
@@ -51,7 +51,7 @@
         {
           "Image": "imgs/blankImage",
           "TitleAlignment": "bottom",
-          "FontSize": "16"
+          "FontSize": 16
         }
       ],
       "Tooltip": "Control playback for a playlist in the Kenku Player app",
@@ -66,7 +66,7 @@
         {
           "Image": "imgs/actionSoundboardPlayImage",
           "TitleAlignment": "bottom",
-          "FontSize": "16"
+          "FontSize": 16
         }
       ],
       "Tooltip": "Plays a sound or soundboard by ID in the Kenku Player app",

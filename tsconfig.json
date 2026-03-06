@@ -6,7 +6,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": ".sdPlugin/bin",
+    "outDir": "fm.kenku.remote.sdPlugin/bin",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

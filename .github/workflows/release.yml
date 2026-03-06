@@ -31,7 +31,7 @@ jobs:
       - name: Package plugin
         run: |
           npm install -g @elgato/cli
-          streamdeck pack .sdPlugin
+          streamdeck pack fm.kenku.remote.sdPlugin
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
