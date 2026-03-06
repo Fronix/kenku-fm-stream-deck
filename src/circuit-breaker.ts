@@ -1,36 +1,28 @@
+type BreakerState = "OPENED" | "HALF" | "CLOSED";
+
 /**
  * Circuit Breaker pattern for handling requests to the remote playback state.
- * The requests will fail if Kenku FM is closed so this pattern helps reduce failed requests.
+ * Reduces failed requests when Kenku FM is closed.
  * https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern
- * Code adapted from https://medium.com/geekculture/nodejs-circuit-breaker-pattern-ed6b31896a57
  */
-class CircuitBreaker {
-  /** The state of the breaker either "OPENED", "HALF" or "CLOSED" */
-  state = "OPENED";
+export class CircuitBreaker<T> {
+  private state: BreakerState = "OPENED";
+  private readonly openTimeout = 10000;
+  private readonly closedTimeout = 15000;
+  private readonly failedRequestThreshold = 5;
+  private readonly failedRequestPercentageThreshold = 50;
 
-  /** Timeout in ms to wait when in a half state before opening the breaker */
-  openTimeout = 10000;
-  /** Timeout in ms to wait when in a closed state before triggering a new request */
-  closedTimeout = 15000;
-  /** Number of failed requests before checking whether the breaker should close */
-  failedRequestThreshold = 5;
-  /** Percentage of requests that need to have failed before actually closing the breaker */
-  failedRequestPercentageThreshold = 50;
+  private halfFinishTime: number | undefined;
+  private closedRetryTime: number | undefined;
 
-  halfFinishTime = undefined;
-  closedRetryTime = undefined;
+  private failCount = 0;
+  private successCount = 0;
 
-  failCount = 0;
-  successCount = 0;
+  constructor(private readonly request: () => Promise<T>) {}
 
-  constructor(request) {
-    this.request = request;
-  }
-
-  async fire() {
+  async fire(): Promise<T> {
     if (this.state === "CLOSED") {
-      const retry = Date.now() > this.closedRetryTime;
-      if (!retry) {
+      if (!this.closedRetryTime || Date.now() <= this.closedRetryTime) {
         throw new Error("Breaker is closed");
       }
     }
@@ -39,20 +31,21 @@ class CircuitBreaker {
       const response = await this.request();
       return this.success(response);
     } catch (e) {
-      return this.fail(e);
+      this.fail();
+      throw e;
     }
   }
 
-  resetStatistics() {
+  private resetStatistics(): void {
     this.successCount = 0;
     this.failCount = 0;
     this.halfFinishTime = undefined;
   }
 
-  success(response) {
+  private success(response: T): T {
     if (this.state === "HALF") {
       this.successCount++;
-      if (Date.now() >= this.halfFinishTime) {
+      if (this.halfFinishTime && Date.now() >= this.halfFinishTime) {
         this.state = "OPENED";
         this.resetStatistics();
       }
@@ -65,27 +58,27 @@ class CircuitBreaker {
     return response;
   }
 
-  fail(e) {
+  private fail(): void {
     if (this.state === "CLOSED") {
       this.closedRetryTime = Date.now() + this.closedTimeout;
-      return e;
+      return;
     }
 
     if (this.state === "OPENED") {
       this.failCount = 1;
       this.state = "HALF";
       this.halfFinishTime = Date.now() + this.openTimeout;
-      return e;
+      return;
     }
 
     if (this.state === "HALF") {
       this.failCount++;
 
-      if (Date.now() > this.halfFinishTime) {
+      if (this.halfFinishTime && Date.now() > this.halfFinishTime) {
         this.resetStatistics();
         this.failCount = 1;
         this.halfFinishTime = Date.now() + this.openTimeout;
-        return e;
+        return;
       }
 
       if (this.failCount >= this.failedRequestThreshold) {
@@ -95,13 +88,12 @@ class CircuitBreaker {
           this.state = "CLOSED";
           this.resetStatistics();
           this.closedRetryTime = Date.now() + this.closedTimeout;
-          return e;
+          return;
         }
 
         this.resetStatistics();
         this.failCount = 1;
         this.halfFinishTime = Date.now() + this.openTimeout;
-        return e;
       }
     }
   }

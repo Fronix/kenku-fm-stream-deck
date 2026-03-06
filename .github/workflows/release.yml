@@ -11,13 +11,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
       - name: Package plugin
         run: |
-          PLUGIN_DIR="fm.kenku.remote.sdPlugin"
-          mkdir "$PLUGIN_DIR"
-          cp -r assets docs pi plugin manifest.json en.json LICENSE README.md "$PLUGIN_DIR/"
           npm install -g @elgato/cli
-          streamdeck pack "$PLUGIN_DIR"
+          streamdeck pack .sdPlugin
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2

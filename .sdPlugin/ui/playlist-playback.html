@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+  </head>
+  <body>
+    <sdpi-item label="Action">
+      <sdpi-select setting="action">
+        <option value="play-pause">Play/Pause</option>
+        <option value="mute">Mute</option>
+        <option value="decrease-volume">Decrease Volume</option>
+        <option value="increase-volume">Increase Volume</option>
+        <option value="next">Next Track</option>
+        <option value="previous">Previous Track</option>
+        <option value="shuffle">Shuffle</option>
+        <option value="repeat">Repeat</option>
+      </sdpi-select>
+    </sdpi-item>
+    <details>
+      <summary>Advanced</summary>
+      <sdpi-item label="Address">
+        <sdpi-textfield setting="address" global placeholder="e.g. 127.0.0.1" value="127.0.0.1"></sdpi-textfield>
+      </sdpi-item>
+      <sdpi-item label="Port">
+        <sdpi-textfield setting="port" global placeholder="e.g. 3333" value="3333"></sdpi-textfield>
+      </sdpi-item>
+    </details>
+  </body>
+</html>

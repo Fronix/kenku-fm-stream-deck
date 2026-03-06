@@ -1,0 +1,78 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "UUID": "fm.kenku.remote",
+  "Name": "Kenku FM",
+  "Version": "1.0.0.0",
+  "Author": "Kenku FM",
+  "Description": "Stream Deck plugin for Kenku FM",
+  "Icon": "imgs/pluginIcon",
+  "CategoryIcon": "imgs/categoryIcon",
+  "Category": "Kenku FM",
+  "CodePath": "bin/plugin.js",
+  "URL": "https://www.kenku.fm/",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.5"
+  },
+  "OS": [
+    {
+      "Platform": "mac",
+      "MinimumVersion": "10.15"
+    },
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Nodejs": {
+    "Version": "20",
+    "Debug": "enabled"
+  },
+  "Actions": [
+    {
+      "Icon": "imgs/actionPlaylistPlayIcon",
+      "Name": "Play Playlist",
+      "States": [
+        {
+          "Image": "imgs/actionPlaylistPlayImage",
+          "TitleAlignment": "bottom",
+          "FontSize": "16"
+        }
+      ],
+      "Tooltip": "Plays a track or playlist by ID in the Kenku Player app",
+      "UUID": "fm.kenku.remote.playlist-play",
+      "PropertyInspectorPath": "ui/playlist-play.html",
+      "Controllers": ["Keypad"]
+    },
+    {
+      "Icon": "imgs/actionPlaybackIcon",
+      "Name": "Control Playlist",
+      "States": [
+        {
+          "Image": "imgs/blankImage",
+          "TitleAlignment": "bottom",
+          "FontSize": "16"
+        }
+      ],
+      "Tooltip": "Control playback for a playlist in the Kenku Player app",
+      "UUID": "fm.kenku.remote.playlist-playback",
+      "PropertyInspectorPath": "ui/playlist-playback.html",
+      "Controllers": ["Keypad"]
+    },
+    {
+      "Icon": "imgs/actionSoundboardPlayIcon",
+      "Name": "Play Soundboard",
+      "States": [
+        {
+          "Image": "imgs/actionSoundboardPlayImage",
+          "TitleAlignment": "bottom",
+          "FontSize": "16"
+        }
+      ],
+      "Tooltip": "Plays a sound or soundboard by ID in the Kenku Player app",
+      "UUID": "fm.kenku.remote.soundboard-play",
+      "PropertyInspectorPath": "ui/soundboard-play.html",
+      "Controllers": ["Keypad"]
+    }
+  ]
+}
